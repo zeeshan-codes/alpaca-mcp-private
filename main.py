@@ -1,7 +1,7 @@
 import os
 
-# Import the pre-configured server directly from the Alpaca package
-from alpaca_mcp_server.server import mcp
+# In V2, we must use build_server() instead of importing an initialized mcp object
+from alpaca_mcp_server.server import build_server
 
 # Ensure the required Alpaca credentials exist before booting
 if not os.getenv("ALPACA_API_KEY") or not os.getenv("ALPACA_SECRET_KEY"):
@@ -11,11 +11,11 @@ if not os.getenv("ALPACA_API_KEY") or not os.getenv("ALPACA_SECRET_KEY"):
     )
 
 if __name__ == "__main__":
-    # MCP Hosting automatically assigns a port via the PORT environment variable.
-    # We default to 8000 if it's not found.
     port = int(os.getenv("PORT", 8000))
+    print(f"Starting Alpaca MCP Server V2 on port {port}...")
     
-    print(f"Starting Alpaca MCP Server on port {port}...")
+    # Initialize the server instance
+    server = build_server()
     
-    # Run the server using Server-Sent Events (SSE) so it can be accessed over HTTP
-    mcp.run(transport="sse", host="0.0.0.0", port=port)
+    # Run the server using Server-Sent Events (SSE)
+    server.run(transport="sse", host="0.0.0.0", port=port)
